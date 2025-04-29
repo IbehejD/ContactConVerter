@@ -1,19 +1,19 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
+project(example LANGUAGES CXX)
 
-project(QtFileDialogExample VERSION 1.0)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
-# Tell CMake where to find Qt
-set(CMAKE_AUTOMOC ON)
+include(FetchContent)
 
+FetchContent_Declare(
+    webview
+    GIT_REPOSITORY https://github.com/webview/webview
+    GIT_TAG 0.12.0)
+FetchContent_MakeAvailable(webview)
 
-find_package(Qt6 COMPONENTS Widgets REQUIRED)
-
-# Create the executable
-add_executable(QtFileDialogExample MACOSX_BUNDLE main.cpp)
-
-# Link the Qt5 Widgets library
-target_link_libraries(QtFileDialogExample Qt6::Widgets)
-
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_executable(example WIN32)
+target_sources(example PRIVATE main.cpp)
+target_link_libraries(example PRIVATE webview::core)
+target_include_directories(example PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external)
